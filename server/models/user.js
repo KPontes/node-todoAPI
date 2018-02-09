@@ -45,12 +45,29 @@ UserSchema.methods.toJSON = function() {
 UserSchema.methods.generateAuthToken = function () {
   var user = this;
   var access = 'auth';
-  var token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
+  var token = jwt.sign({_id: user._id.toHexString(), access}, 'mySaltSecret').toString();
 
   user.tokens.push({access, token});
 
   return user.save().then(() => {
     return token;
+  });
+};
+
+UserSchema.statics.findByToken = function(token) {
+  //this is a Model method instead of instance method.
+  var User = this; //uppercase as for model methods
+  var decoded;
+
+  try {
+    decoded = jwt.verify(token, 'mySaltSecret');
+  } catch (e) {
+    return Promise.reject();
+  };
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
   });
 };
 
