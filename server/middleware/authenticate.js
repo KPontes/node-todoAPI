@@ -10,7 +10,8 @@ var authenticate  = (req, res, next) => {
     req.token = token;
     next(); //return from this middleware to the calling function
   }).catch((e) => {
-    return res.status(401).send;
+    //return error
+    res.status(401).send();
   });
 };
 
