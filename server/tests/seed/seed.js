@@ -17,16 +17,22 @@ const users = [{
   _id: userTwoId,
   email: 'user2@test.com',
   password: '222222',
+  tokens: [{
+    access: 'auth',
+    token: jwt.sign({_id: userTwoId, access: 'auth'}, 'mySaltSecret').toString()
+  }]
 }];
 
 const todos = [{
   _id: new ObjectID(),
-  text: 'First test todo'
+  text: 'First test todo',
+  _creator: userOneId
 }, {
   _id: new ObjectID(),
   text: 'Second test todo',
   completed: true,
-  completedAt: 33456
+  completedAt: 33456,
+  _creator: userTwoId
 }];
 
 //clean the database before each it test
